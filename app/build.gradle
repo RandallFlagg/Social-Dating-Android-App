@@ -1,13 +1,16 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    namespace = "uk.hizup.myapplication"
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId "uk.hizup.myapplication"
-        minSdkVersion 23
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
     }
@@ -17,11 +20,32 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Use Java Toolchain to ensure compilation with JDK 17
+    // This tells Gradle to use a JDK 17 for compiling this module.
+    // Gradle will download it if not found.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildToolsVersion '36.0.0'
+}
+
+// If you are purely Java and don't plan to use Kotlin, this block can be omitted,
+// but it's good practice to include it for future compatibility.
+kotlin{
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.13.2' // Updated to latest stable JUnit 4
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.12.0'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add("-Xlint:deprecation")
 }

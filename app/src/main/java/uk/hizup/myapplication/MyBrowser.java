@@ -18,6 +18,7 @@ package uk.hizup.myapplication;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -27,13 +28,18 @@ import android.webkit.WebViewClient;
 public class MyBrowser extends WebViewClient {
 
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        // Get the URL from the WebResourceRequest
+        String url = request.getUrl().toString();
 
-        // Check the URL ends
-        if (Uri.parse(url).getHost().endsWith(MainActivity.URL_SITE)) {
+        // Check if the URL's host ends with the allowed site URL
+        // Assuming MainActivity.URL_SITE is a constant defining your allowed domain
+        if (Uri.parse(url).getHost() != null && Uri.parse(url).getHost().endsWith(MainActivity.URL_SITE)) {
+            // If it's your site, let the WebView load it
             return false;
         }
 
+        // If it's an external URL, open it in the default browser
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         view.getContext().startActivity(intent);
         return true;
